@@ -135,7 +135,21 @@ def singleFoodSearchHeuristic(state, problem=None):
     A heuristic function for the problem of single food search
     """
     # TODO 20
-    pass
+    
+    pacman_position, food_grid = state
+
+    # Find the closest food using Manhattan distance
+    distances = []
+    for i in range(food_grid.width):
+        for j in range(food_grid.height):
+            if food_grid[i][j]:
+                distance = abs(pacman_position[0] - i) + abs(pacman_position[1] - j)
+                distances.append(distance)
+
+    if distances:
+        return min(distances)
+    else:
+        return 0
 
 
 def multiFoodSearchHeuristic(state, problem=None):
