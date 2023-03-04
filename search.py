@@ -11,7 +11,6 @@ s = Directions.SOUTH
 e = Directions.EAST
 w = Directions.WEST
 
-
 def depthFirstSearch(problem):
     '''
     return a path to the goal
@@ -136,21 +135,7 @@ def singleFoodSearchHeuristic(state, problem=None):
     A heuristic function for the problem of single food search
     """
     # TODO 20
-    pacman_position, food_grid = state
-
-    # Find the closest food using Manhattan distance
-    distances = []
-    for i in range(food_grid.width):
-        for j in range(food_grid.height):
-            if food_grid[i][j]:
-                distance = abs(pacman_position[0] - i) + abs(pacman_position[1] - j)
-                distances.append(distance)
-
-    if distances:
-        return min(distances)
-    else:
-        return 0
-    
+    pass
 
 
 def multiFoodSearchHeuristic(state, problem=None):
@@ -158,8 +143,39 @@ def multiFoodSearchHeuristic(state, problem=None):
     A heuristic function for the problem of multi-food search
     """
     # TODO 21
-    pass
+    position, foodGrid = state
+    H = 0
+    maxDistance = 0
+    # find the farthest distance by Astar search using mazeDistance() function.
+    for y in range(foodGrid.height):
+        for x in range(foodGrid.width):
+            if (foodGrid[x][y] == 1) and (getMazeDistance(x,y) > maxDistance):
+                maxDistance = getMazeDistance(x,y)
+    H = maxDistance     
+    return H
 
+def getMazeDistance(self, start, end):
+        """
+        Returns the maze distance between two positions in the maze.
+        """
+        from util import PriorityQueue
+        visited = set()
+        frontier = PriorityQueue()
+        frontier.push((start, []), 0)
+
+        while not frontier.isEmpty():
+            state, actions = frontier.pop()
+            if state == end:
+                return len(actions)
+            if state in visited:
+                continue
+            visited.add(state)
+            for successor, cost in self.getSuccessors(state):
+                new_actions = actions + [successor]
+                priority = self.getCostOfActions(new_actions) + self.heuristic(successor)
+                frontier.push((successor, new_actions), priority)
+
+        return float("inf")
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     '''
