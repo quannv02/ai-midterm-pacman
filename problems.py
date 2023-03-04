@@ -1,6 +1,11 @@
 import util
 from game import Directions, Actions
 
+n = Directions.NORTH
+s = Directions.SOUTH
+e = Directions.EAST
+w = Directions.WEST
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -47,23 +52,66 @@ class SearchProblem:
 class SingleFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
         # TODO 1
-        pass
+        
+        self.startingGameState = startingGameState
+        self.food = self.startingGameState.getFood()
+        self.walls = self.startingGameState.getWalls()
+        self.start = self.startingGameState.getPacmanPosition()
+        
+        self.costFn = 1
+        
+        # For display purposes
+        self._visited, self._visitedlist, self._expanded = {}, [], 0  # DO NOT CHANGE
+        #self.heuristicInfo = {} # A dictionary for the heuristic to store information
+        
 
     def getStartState(self):
-        # TODO 1
-        pass
+        # TODO 2
+        return self.start
+        
 
     def isGoalState(self, state):
         # TODO 3
-        pass
+        return state == self.food.asList[0]
+        
 
     def getSuccessors(self, state):
         # TODO 4
-        pass
+        successors = []
+        for action in [n, s, e, w]:
+            x,y = state
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+                cost = 1
+                successors.append( ( nextState, action, cost) )
+                
+        # Bookkeeping for display purposes
+        self._expanded += 1  # DO NOT CHANGE
+        if state not in self._visited:
+            self._visited[state] = True
+            self._visitedlist.append(state)
+
+        return successors
+        
 
     def getCostOfActions(self, actions):
         # TODO 5
-        pass
+        
+        if actions == None:
+            return 999999
+        
+        x, y = self.getStartState()
+        cost = 0
+        for action in actions:
+            # Check figure out the next state and see whether its' legal
+            dx, dy = Actions.directionToVector(action)
+            x, y = int(x + dx), int(y + dy)
+            if self.walls[x][y]:
+                return 999999
+            cost += 1
+        return cost
 
 
 class MultiFoodSearchProblem(SearchProblem):
