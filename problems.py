@@ -58,13 +58,10 @@ class SingleFoodSearchProblem(SearchProblem):
         self.walls = self.startingGameState.getWalls()
         self.start = self.startingGameState.getPacmanPosition()
         
-        self.costFn = 1
-        
         # For display purposes
-        self._visited, self._visitedlist, self._expanded = {}, [], 0  # DO NOT CHANGE
-        #self.heuristicInfo = {} # A dictionary for the heuristic to store information
+        self._visited, self._visitedlist, self._expanded = {}, [], 0  
         
-
+        
     def getStartState(self):
         # TODO 2
         return self.start
@@ -72,7 +69,7 @@ class SingleFoodSearchProblem(SearchProblem):
 
     def isGoalState(self, state):
         # TODO 3
-        return state == self.food.asList[0]
+        return state == self.food.asList()[0]
         
 
     def getSuccessors(self, state):
