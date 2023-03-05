@@ -67,8 +67,8 @@ class BFSFoodSearchAgent(SearchAgent):
     
     def __init__(self):
         self.searchFunction = search.breadthFirstSearch
-        #self.searchType = problems.SingleFoodSearchProblem
-        self.searchType = problems.MultiFoodSearchProblem
+        self.searchType = problems.SingleFoodSearchProblem
+        #self.searchType = problems.MultiFoodSearchProblem
     pass
 
 

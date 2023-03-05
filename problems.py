@@ -52,7 +52,6 @@ class SearchProblem:
 class SingleFoodSearchProblem(SearchProblem):
     def __init__(self, startingGameState):
         # TODO 1
-        
         self.startingGameState = startingGameState
         self.food = self.startingGameState.getFood()
         self.walls = self.startingGameState.getWalls()
@@ -90,15 +89,7 @@ class SingleFoodSearchProblem(SearchProblem):
         if actions is None:
             return 999999
         
-        x, y = self.getStartState()
-        cost = 0
-        for action in actions:
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]:
-                return 999999
-            cost += 1
-        return cost
+        return len(actions)
 
 
 class MultiFoodSearchProblem(SearchProblem):
