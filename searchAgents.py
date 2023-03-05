@@ -35,13 +35,12 @@ class SearchAgent(Agent):
         
         if self.searchFunction == None: 
             raise Exception("No search function provided for SearchAgent")
-        starttime = time.time()
+        
         problem = self.searchType(state) # Makes a new search problem
         self.actions  = self.searchFunction(problem) # Find a path
         totalCost = problem.getCostOfActions(self.actions)
-        print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
-        if '_expanded' in dir(problem): 
-            print('Search nodes expanded: %d' % problem._expanded)
+        print(f"The total cost of the path is {totalCost}")
+        
 
 
     def getAction(self, state):
@@ -88,8 +87,8 @@ class UCSFoodSearchAgent(SearchAgent):
     
     def __init__(self):
         self.searchFunction = search.uniformCostSearch
-        #self.searchType = problems.SingleFoodSearchProblem
-        self.searchType = problems.MultiFoodSearchProblem
+        self.searchType = problems.SingleFoodSearchProblem
+        #self.searchType = problems.MultiFoodSearchProblem
     pass
 
 

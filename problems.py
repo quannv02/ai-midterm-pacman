@@ -58,9 +58,6 @@ class SingleFoodSearchProblem(SearchProblem):
         self.walls = self.startingGameState.getWalls()
         self.start = self.startingGameState.getPacmanPosition()
         
-        # For display purposes
-        self._visited, self._visitedlist, self._expanded = {}, [], 0  
-        
         
     def getStartState(self):
         # TODO 2
@@ -75,20 +72,14 @@ class SingleFoodSearchProblem(SearchProblem):
     def getSuccessors(self, state):
         # TODO 4
         successors = []
+        
         for action in [n, s, e, w]:
             x,y = state
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
-                cost = 1
-                successors.append( ( nextState, action, cost) )
-                
-        # Bookkeeping for display purposes
-        self._expanded += 1  # DO NOT CHANGE
-        if state not in self._visited:
-            self._visited[state] = True
-            self._visitedlist.append(state)
+                successors.append((nextState, action, 1))
 
         return successors
         
@@ -96,13 +87,12 @@ class SingleFoodSearchProblem(SearchProblem):
     def getCostOfActions(self, actions):
         # TODO 5
         
-        if actions == None:
+        if actions is None:
             return 999999
         
         x, y = self.getStartState()
         cost = 0
         for action in actions:
-            # Check figure out the next state and see whether its' legal
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]:
