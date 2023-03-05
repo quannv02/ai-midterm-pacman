@@ -17,37 +17,34 @@ def depthFirstSearch(problem):
     '''
     # TODO 17
     
-    frontier = util.Stack() # Creates an empty Stack
+    # Creates an empty Stack
+    frontier = util.Stack() 
     explored = set()
-
-    path = []
+    
+    # Pushes the start node to the stack
     start_node = problem.getStartState()
-
-    frontier.push((start_node, path))  # Pushes the start node to the stack
+    frontier.push((start_node, []))  
 
     while not frontier.isEmpty():
 
         current_node, path = frontier.pop()
         
-        # Return the final path if the current node is goal
+        # Return the final path if the current node is goal state
         if problem.isGoalState(current_node):
             return path
 
-        # Pushes the current node to the explored list if it is not explored
+        # If it is not explored, add the current node to the list 
         if current_node not in explored:
             explored.add(current_node)
-
+        
         # Gets successors of the current node
         successors = problem.getSuccessors(current_node)
-
-        for successor, action, step_cost in successors:
+        for successor, action, action_cost in successors:
             if successor not in explored:
-                next_state = successor
                 new_path = path + [action]
-                frontier.push((next_state, new_path))
-    
-
-    util.raiseNotDefined()
+                frontier.push((successor, new_path))
+        
+    return "No path found"
 
 
 def breadthFirstSearch(problem):
@@ -60,34 +57,30 @@ def breadthFirstSearch(problem):
     frontier = util.Queue() 
     explored = set()
 
-    path = []
+    # Pushes the start node to the Queue
     start_node = problem.getStartState()
-
-    # Pushes the start position to the queue
-    frontier.push((start_node, path)) 
+    frontier.push((start_node, []))  
 
     while not frontier.isEmpty():
 
         current_node, path = frontier.pop()
         
-        # Returns the final path if the current node is goal
+        # Return the final path if the current node is goal state
         if problem.isGoalState(current_node):
             return path
 
-        # Add the current node to the explored list if it is not explored
+        # If it is not explored, add the current node to the list 
         if current_node not in explored:
             explored.add(current_node)
-
+        
         # Gets successors of the current node
         successors = problem.getSuccessors(current_node)
-
-        for successor, action, step_cost in successors:
+        for successor, action, action_cost in successors:
             if successor not in explored:
-                next_state = successor
                 new_path = path + [action]
-                frontier.push((next_state, new_path))
-    
-    util.raiseNotDefined()
+                frontier.push((successor, new_path))
+        
+    return "No path found"
 
 
 def uniformCostSearch(problem):

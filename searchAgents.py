@@ -68,7 +68,8 @@ class BFSFoodSearchAgent(SearchAgent):
     
     def __init__(self):
         self.searchFunction = search.breadthFirstSearch
-        self.searchType = problems.SingleFoodSearchProblem
+        #self.searchType = problems.SingleFoodSearchProblem
+        self.searchType = problems.MultiFoodSearchProblem
     pass
 
 
@@ -77,7 +78,8 @@ class DFSFoodSearchAgent(SearchAgent):
     
     def __init__(self):
         self.searchFunction = search.depthFirstSearch
-        self.searchType = problems.SingleFoodSearchProblem
+        #self.searchType = problems.SingleFoodSearchProblem
+        self.searchType = problems.MultiFoodSearchProblem
     pass
 
 
@@ -86,7 +88,8 @@ class UCSFoodSearchAgent(SearchAgent):
     
     def __init__(self):
         self.searchFunction = search.uniformCostSearch
-        self.searchType = problems.SingleFoodSearchProblem
+        #self.searchType = problems.SingleFoodSearchProblem
+        self.searchType = problems.MultiFoodSearchProblem
     pass
 
 
