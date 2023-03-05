@@ -84,23 +84,23 @@ def breadthFirstSearch(problem):
 
 
 def uniformCostSearch(problem):
-
-    # TODO 19
-    visited = {}  # store visited states, use dict to keep distinct and access to key/value
-    frontier = util.PriorityQueue()  # init the frontier ((pos, path, cost), cost) using a PriorityQueue
-    frontier.push((problem.getStartState(), [], 0), 0)
+    visited = {} 
+    frontier = util.PriorityQueue()  
+    start_state = problem.getStartState()
+    frontier.push((start_state, [], 0), 0)
 
     while not frontier.isEmpty():
-        currentState, path, cost = frontier.pop()
+        current_state, path, cost = frontier.pop()
 
-        # if it is a goal state then return the corresponding solution
-        if problem.isGoalState(currentState):
+        if problem.isGoalState(current_state):
             return path
 
-        if (currentState not in visited) or (cost < visited[currentState]):
-            visited[currentState] = cost
-            for successor in problem.getSuccessors(currentState):
-                frontier.push((successor[0], path + [successor[1]], cost + successor[2]), cost + successor[2])
+        if (current_state not in visited) or (cost < visited[current_state]):
+            visited[current_state] = cost
+            for successor_state, successor_action, successor_cost in problem.getSuccessors(current_state):
+                successor_path = path + [successor_action]
+                successor_total_cost = cost + successor_cost
+                frontier.push((successor_state, successor_path, successor_total_cost), successor_total_cost)
 
     return "No path found"
 
