@@ -134,135 +134,66 @@ def singleFoodSearchHeuristic(state, problem=None):
     else:
         return 0
 
-
 def multiFoodSearchHeuristic(state, problem=None):
     """
     A heuristic function for the problem of multi-food search
     """
     # TODO 21
-    pacmanPos, foodGrid = state
-    foodList = foodGrid.asList()  # get a list of food coordinates
-    heuristic = 0
 
-    # calculate the distance from current pacmanPos to food-containing pos
-    if len(foodList) > 0:
-        currentState = problem.startingGameState
+    pacman_pos, food_list = state
 
-        # find the closest food
-        closestFood = findClosestPoint(pacmanPos, foodList)
-        closestFoodIndex = closestFood[0]
-        closestFoodPos = foodList[closestFoodIndex]
+    # If there is no more food, the heuristic value is 0
+    if not food_list:
+        return 0
 
-        # find the farthest food
-        farthestFood = findFarthestPoint(pacmanPos, foodList)
-        farthestFoodIndex = farthestFood[0]
-        farthestFoodPos = foodList[farthestFoodIndex]
+    # Compute the distance from the Pacman to the closest food using Manhattan distance
+    min_distance = float('inf')
+    for food in food_list:
+        distance = abs(pacman_pos[0] - food[0]) + abs(pacman_pos[1] - food[1])
+        if distance < min_distance:
+            min_distance = distance
 
-        # distance between current location and closest food state
-        currentToClosest = mazeDistance(pacmanPos, closestFoodPos, currentState)
+    # Estimate the remaining cost as the sum of the distances from the closest food to all other food
+    remaining_cost = 0
+    for food in food_list:
+        remaining_cost += abs(food[0] - pacman_pos[0]) + abs(food[1] - pacman_pos[1])
 
-        # distance between the closest food state and farthest food state
-        closestToFarthest = mazeDistance(closestFoodPos, farthestFoodPos, currentState)
+    return min_distance + remaining_cost
 
-        heuristic = currentToClosest + closestToFarthest
-
-    return heuristic
-
-def mazeDistance(point1, point2, gameState):
-    """
-    Returns the maze distance between any two points.
-    support for multiFoodSearchHeuristic
-    """
-    x1, y1 = point1
-    x2, y2 = point2
-    walls = gameState.getWalls()
-
-    if walls[x1][y1]:
-        raise 'point1 is a wall: ' + str(point1)
-    if walls[x2][y2]:
-        raise 'point2 is a wall: ' + str(point2)
-
-    prob = problems.SingleFoodSearchProblem(gameState)
-    return len(breadthFirstSearch(prob))
-
-def findClosestPoint(location, goalArray):
-    """
-    support for calculate mazeDistance
-    """
-
-    closestPoint = 0
-    closestPointCost = util.manhattanDistance(location, goalArray[0])
-
-    for j in range(len(goalArray)):
-        # calculate distance between current state to corner
-        cornerLocation = goalArray[j]
-        lengthToCorner = util.manhattanDistance(location, cornerLocation)
-
-        if lengthToCorner < closestPointCost:
-            closestPoint = j
-            closestPointCost = lengthToCorner
-
-    return closestPoint, closestPointCost
-
-
-def findFarthestPoint(location, goalArray):
-    """
-    support for calculate mazeDistance
-    """
-
-    farthestPoint = 0
-    farthestPointCost = util.manhattanDistance(location, goalArray[0])
-
-    for j in range(len(goalArray)):
-        # calculate distance between current state to corner
-        cornerLocation = goalArray[j]
-        lengthToCorner = util.manhattanDistance(location, cornerLocation)
-
-        if lengthToCorner > farthestPointCost:
-            farthestPoint = j
-            farthestPointCost = lengthToCorner
-
-    return farthestPoint, farthestPointCost
-
-def aStarSearch(problem, heuristic=nullHeuristic):
+def aStarSearch(problem, heuristic=multiFoodSearchHeuristic):
     '''
     return a path to the goal
     '''
     # TODO 22
-    frontier = util.PriorityQueue()
+    fringe = util.PriorityQueue() 
+    visitedList = []
 
-    def frontierAdd(frontier, state, cost):  # state is a tuple with format like : (state, cost, path)
-        cost += heuristic(state[0], problem)  # f(n) = g(n) + h(n), heuristic(state, problem=None)
-        frontier.push(state, cost)
+    #push the starting point into queue
+    fringe.push((problem.getStartState(),[],0),0 + heuristic(problem.getStartState(),problem)) # push starting point with priority num of 0
+    #pop out the point
+    (state,toDirection,toCost) = fringe.pop()
+    #add the point to visited list
+    visitedList.append((state,toCost + heuristic(problem.getStartState(),problem)))
 
-    # initialize the frontier using the initial state of problem
-    startState = (problem.getStartState(), 0, [])  # state is a tuple with format like : (state, cost, path)
-    frontierAdd(frontier, startState, 0)  # frontierAdd(frontier, state, cost)
+    while not problem.isGoalState(state): #while we do not find the goal point
+        successors = problem.getSuccessors(state) #get the point's succesors
+        for son in successors:
+            visitedExist = False
+            total_cost = toCost + son[2]
+            for (visitedState,visitedToCost) in visitedList:
+                # if the successor has not been visited, or has a lower cost than the previous one
+                if (son[0] == visitedState) and (total_cost >= visitedToCost): 
+                    visitedExist = True
+                    break
 
-    # initialize the visited set to be empty
-    visited = set()  # use set to keep distinct
+            if not visitedExist:        
+                # push the point with priority num of its total cost
+                fringe.push((son[0],toDirection + [son[1]],toCost + son[2]),toCost + son[2] + heuristic(son[0],problem)) 
+                visitedList.append((son[0],toCost + son[2])) # add this point to visited list
 
-    while not frontier.isEmpty():
-        # choose a child state and remove it from the frontier
-        (currentState, cost, path) = frontier.pop()
+        (state,toDirection,toCost) = fringe.pop()
 
-        # if it is a goal state then return the corresponding solution
-        if problem.isGoalState(currentState):
-            return path
-
-        # add the state to the visited set
-        if currentState not in visited:
-            visited.add(currentState)
-
-            # expand the chosen state, adding the resulting states to the frontier
-            # ??? only if not in the frontier or visited set
-            for childState, childAction, childCost in problem.getSuccessors(currentState):
-                newCost = cost + childCost  
-                newPath = path + [childAction]  
-                newState = (childState, newCost, newPath)
-                frontierAdd(frontier, newState, newCost)
-
-    return "No path found"
+    return toDirection
 
 # Abbreviations
 bfs = breadthFirstSearch

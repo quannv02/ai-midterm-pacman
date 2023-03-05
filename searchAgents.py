@@ -87,8 +87,8 @@ class UCSFoodSearchAgent(SearchAgent):
     
     def __init__(self):
         self.searchFunction = search.uniformCostSearch
-        self.searchType = problems.SingleFoodSearchProblem
-        #self.searchType = problems.MultiFoodSearchProblem
+       # self.searchType = problems.SingleFoodSearchProblem
+        self.searchType = problems.MultiFoodSearchProblem
     pass
 
 
